@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import { Model } from 'mongoose';
 import { genSaltSync, hashSync } from 'bcryptjs';
+import { DeleteUserDto } from './dto/delete-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -38,12 +39,20 @@ export class UsersService {
     }
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async update(updateUserDto: UpdateUserDto) {
     try {
       return await this.userModel.findByIdAndUpdate(
-        { _id: id },
-        { email: updateUserDto.email, name: updateUserDto.name },
+        { _id: updateUserDto.id },
+        { ...UpdateUserDto },
       );
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async delete(deleteUserDto: DeleteUserDto) {
+    try {
+      return await this.userModel.deleteOne({ _id: deleteUserDto.id });
     } catch (error) {
       return error;
     }
